@@ -1,0 +1,11 @@
+
+setwd("C:/Users/test1/OneDrive/Documents 201617/R/Alluvial")
+Nitrogencount=read.table("Try_again.txt",header=T)
+install.packages("tidyverse")
+library(tidyverse)
+install.packages("ggplot2")
+library(ggplot2)
+head(as.data.frame(Nitrogencount), n = 12)
+install.packages("ggalluvial")
+library(ggalluvial)
+is_alluvial(as.data.frame(UCBAdmissions), logical = FALSE, silent = TRUE)
