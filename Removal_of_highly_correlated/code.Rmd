@@ -1,0 +1,47 @@
+---
+title: "Gradient Forest"
+---
+#make sure you get rid of any columns with identical values the whole way down
+```{r}
+#cleaning of environment and loading packages
+rm(list=ls())
+library ("ggplot2") 
+library ("corrplot")
+library ("car")
+library ("gridExtra")
+library ("caret")
+library ("dplyr")
+
+#read in helper function
+'%!in%' <- function(x,y)!('%in%'(x,y))
+
+#read in data, make sure its a data.frame, can check using class()
+data <- read.csv("./rmc.csv",header=T,row.names=1) 
+
+#only keep numerical values
+rc <- sapply(data,is.numeric) %>% data[,.]
+
+#calculate correlations
+cor_rc <- cor(rc)
+cor_rc_plot <- cor_rc
+
+#find highly correlated variables, specify cutoff, cant have NA values
+hcr_rc <- findCorrelation(cor_rc,cutoff=0.75,names=TRUE)
+
+#removal of highly co-correlated based on previous calculations
+if(length(hcr_rc)!= 0){
+rc <- rc[,names(rc) %!in% hcr_rc]
+cor_rc_plot <- cor_rc_plot[which(rownames(cor_rc_plot) %!in% hcr_rc),
+which(colnames(cor_rc_plot) %!in% hcr_rc)]
+}
+
+#scatterplot with hrc removed
+scatterplotMatrix(rc)
+cex.before <- par("cex")
+par(cex=0.7)
+corrpl <- corrplot.mixed(cor_rc_plot,lower="number",upper="circle",
+order="AOE",tl.cex=0.7,tl.col="black",tl.srt=60,cl.cex=1/par("cex"))
+
+#save project
+save.image('./rmc.rdata')
+```
